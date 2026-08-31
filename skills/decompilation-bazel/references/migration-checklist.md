@@ -35,6 +35,10 @@ Names may follow the existing project, but preserve the separation.
 - Add clang-cl or LLVM as a second configuration when cross-compiler validation
   is useful. Do not replace the reference compiler until outputs and behavior are
   understood.
+- For an SDL3 port, keep reconstruction/gameplay logic in an SDL-free
+  `cc_library`, place SDL integration in a platform library, and use the shared
+  `@decomp_sdl3//:sdl3` target. Verify the final shared-library runfiles and
+  distributable package on each supported OS.
 - Prefer a checked-in patch against a pinned upstream source archive for emulator
   automation. Do not mutate a shared checkout in place.
 - A Docker or emulator invocation may be a Bazel action when all inputs and

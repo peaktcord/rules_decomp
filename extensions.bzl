@@ -3,6 +3,7 @@
 load("//repositories:patched_archive.bzl", "patched_archive_repository")
 load("//repositories:ghidra.bzl", "ghidra_repository")
 load("//repositories:pypy.bzl", "pypy_repository")
+load("//repositories:sdl3.bzl", "sdl3_repository")
 load("//repositories:vice.bzl", "vice_repository")
 
 _pypy = tag_class(attrs = {
@@ -28,6 +29,10 @@ _source_archive = tag_class(attrs = {
     "urls": attr.string_list(mandatory = True),
 })
 
+_sdl3 = tag_class(attrs = {
+    "version": attr.string(default = "3.4.14"),
+})
+
 def _single_value(module_ctx, tag_name, attr_name, default):
     values = {}
     for module in module_ctx.modules:
@@ -48,6 +53,7 @@ def _decomp_impl(module_ctx):
     want_pypy = False
     want_vice = False
     want_ghidra = False
+    want_sdl3 = False
     source_names = {}
     for module in module_ctx.modules:
         if module.tags.pypy:
@@ -56,6 +62,8 @@ def _decomp_impl(module_ctx):
             want_vice = True
         if module.tags.ghidra:
             want_ghidra = True
+        if module.tags.sdl3:
+            want_sdl3 = True
         for source in module.tags.source_archive:
             if source.name in source_names:
                 fail("source_archive repository name requested more than once: %s" % source.name)
@@ -88,12 +96,18 @@ def _decomp_impl(module_ctx):
             java_version = _single_value(module_ctx, "ghidra", "java_version", "21"),
             version = _single_version(module_ctx, "ghidra", "12.1.3"),
         )
+    if want_sdl3:
+        sdl3_repository(
+            name = "decomp_sdl3",
+            version = _single_version(module_ctx, "sdl3", "3.4.14"),
+        )
 
 decomp = module_extension(
     implementation = _decomp_impl,
     tag_classes = {
         "ghidra": _ghidra,
         "pypy": _pypy,
+        "sdl3": _sdl3,
         "source_archive": _source_archive,
         "vice": _vice,
     },

@@ -27,10 +27,11 @@ Request only tools the project uses:
 ```starlark
 decomp = use_extension("@rules_decomp//:extensions.bzl", "decomp")
 decomp.pypy(version = "7.3.23")
+decomp.sdl3(version = "3.4.14")
 decomp.vice(version = "3.10")
 decomp.ghidra(version = "12.1.3", java_version = "21")
 
-use_repo(decomp, "decomp_ghidra", "decomp_pypy", "decomp_vice")
+use_repo(decomp, "decomp_ghidra", "decomp_pypy", "decomp_sdl3", "decomp_vice")
 
 register_toolchains(
     "@decomp_pypy//:toolchain",
@@ -45,6 +46,10 @@ Request Ghidra only in repositories that use it. Configure the installation with
 
 Module extensions create repositories but cannot register toolchains. Keep
 `register_toolchains` in the consumer's `MODULE.bazel`.
+
+SDL3 is a dependency repository rather than a toolchain and does not need
+registration. Depend on `@decomp_sdl3//:sdl3`; use
+`@decomp_sdl3//:runtime` only from packaging targets.
 
 ## Verified private files
 

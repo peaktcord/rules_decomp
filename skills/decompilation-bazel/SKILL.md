@@ -68,6 +68,9 @@ new configuration, also read
   and `EmulatorHelper` oracles behind the shared isolated rules. Keep a complete
   ordered workflow in one disposable project action. Keep interactive mutation
   of a personal Ghidra database in a local `ghidra_session` target.
+- Standardize portable C++ platform code on the shared pinned SDL3 repository.
+  Keep the game core SDL-free, put SDL calls in a platform adapter, and package
+  the shared SDL runtime explicitly rather than copying it from `bazel-bin`.
 
 For a Ghidra workflow, read [references/ghidra.md](references/ghidra.md) before
 choosing the target boundary.

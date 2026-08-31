@@ -5,11 +5,13 @@ module(
 
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "rules_cc", version = "0.2.22")
+bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
 
 decomp = use_extension("//:extensions.bzl", "decomp")
 decomp.pypy(version = "7.3.23")
+decomp.sdl3(version = "3.4.14")
 decomp.vice(version = "3.10")
-use_repo(decomp, "decomp_pypy", "decomp_vice")
+use_repo(decomp, "decomp_pypy", "decomp_sdl3", "decomp_vice")
 
 register_toolchains(
     "@decomp_pypy//:toolchain",
@@ -19,3 +21,15 @@ register_toolchains(
 # Analysis-only fixture for this module's Ghidra rule tests. Dependency users do
 # not inherit registrations marked dev_dependency.
 register_toolchains("//tests:ghidra_toolchain", dev_dependency = True)
+
+# Package-loading fixture for the Linux foreign-CMake overlay. It is fetched
+# only by an explicit development query and is not visible to module consumers.
+sdl3_test_repository = use_repo_rule(
+    "//repositories:sdl3.bzl",
+    "sdl3_repository",
+)
+sdl3_test_repository(
+    name = "decomp_sdl3_linux_analysis",
+    platform = "linux",
+    version = "3.4.14",
+)

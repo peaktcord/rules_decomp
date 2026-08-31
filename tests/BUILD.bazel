@@ -1,5 +1,6 @@
 load("//decomp:defs.bzl", "ghidra_oracle", "ghidra_pipeline", "ghidra_session", "sentinel_test", "verified_files")
 load("//toolchains/ghidra:toolchain.bzl", "ghidra_runtime")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 package(default_visibility = ["//visibility:private"])
 
@@ -13,6 +14,12 @@ sentinel_test(
     name = "sentinel_test",
     actual = "input.txt",
     expected = "expected.txt",
+)
+
+cc_test(
+    name = "sdl3_smoke",
+    srcs = ["sdl3_smoke.cpp"],
+    deps = ["@decomp_sdl3//:sdl3"],
 )
 
 ghidra_runtime(

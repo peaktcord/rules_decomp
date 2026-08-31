@@ -4,5 +4,6 @@ exports_files([
     "ghidra.bzl",
     "patched_archive.bzl",
     "pypy.bzl",
+    "sdl3.bzl",
     "vice.bzl",
 ])
