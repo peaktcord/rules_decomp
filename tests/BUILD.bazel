@@ -1,0 +1,15 @@
+load("//decomp:defs.bzl", "sentinel_test", "verified_files")
+
+package(default_visibility = ["//visibility:private"])
+
+verified_files(
+    name = "verified_input",
+    srcs = ["input.txt"],
+    manifest = "input.sha256",
+)
+
+sentinel_test(
+    name = "sentinel_test",
+    actual = "input.txt",
+    expected = "expected.txt",
+)

@@ -1,0 +1,6 @@
+* text=auto
+*.bazel text eol=lf
+*.bzl text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.yaml text eol=lf

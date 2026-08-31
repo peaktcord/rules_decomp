@@ -1,0 +1,3 @@
+common --enable_bzlmod
+build:windows --platforms=//platforms:windows_x86_64
+build:linux --platforms=//platforms:linux_x86_64

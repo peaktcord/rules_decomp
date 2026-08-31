@@ -1,0 +1,7 @@
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "patched_archive.bzl",
+    "pypy.bzl",
+    "vice.bzl",
+])

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Decompilation Bazel"
+  short_description: "Build reproducible Bazel workflows for decompilation projects"
+  default_prompt: "Use $decompilation-bazel to configure or migrate this decompilation project to rules_decomp."
