@@ -28,14 +28,20 @@ Request only tools the project uses:
 decomp = use_extension("@rules_decomp//:extensions.bzl", "decomp")
 decomp.pypy(version = "7.3.23")
 decomp.vice(version = "3.10")
+decomp.ghidra(version = "12.1.3", java_version = "21")
 
-use_repo(decomp, "decomp_pypy", "decomp_vice")
+use_repo(decomp, "decomp_ghidra", "decomp_pypy", "decomp_vice")
 
 register_toolchains(
     "@decomp_pypy//:toolchain",
     "@decomp_vice//:toolchain",
+    "@decomp_ghidra//:toolchain",
 )
 ```
+
+Request Ghidra only in repositories that use it. Configure the installation with
+`--repo_env=GHIDRA_ROOT=...` and its compatible JDK with
+`--repo_env=GHIDRA_JAVA_HOME=...`; do not commit either absolute path.
 
 Module extensions create repositories but cannot register toolchains. Keep
 `register_toolchains` in the consumer's `MODULE.bazel`.

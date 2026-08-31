@@ -64,6 +64,13 @@ new configuration, also read
   actions could collide.
 - Make generated outputs declared artifacts. Avoid writing into the source tree
   during builds and tests.
+- Put deterministic Ghidra imports, analysis scripts, reports, decompilation,
+  and `EmulatorHelper` oracles behind the shared isolated rules. Keep a complete
+  ordered workflow in one disposable project action. Keep interactive mutation
+  of a personal Ghidra database in a local `ghidra_session` target.
+
+For a Ghidra workflow, read [references/ghidra.md](references/ghidra.md) before
+choosing the target boundary.
 
 ## Deliver a migration increment
 

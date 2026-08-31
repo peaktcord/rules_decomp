@@ -40,6 +40,10 @@ Names may follow the existing project, but preserve the separation.
 - A Docker or emulator invocation may be a Bazel action when all inputs and
   outputs are declared, but keep machine services, GUI interaction, and mutable
   profiles outside ordinary test suites.
+- Distinguish Ghidra static analysis from `EmulatorHelper` execution. Keep
+  ordered passes over one disposable project in one `ghidra_pipeline`; use
+  `ghidra_oracle` for bounded execution with completion checks. Do not let a GUI
+  and a headless action operate on the same project directory.
 
 ## Verification
 

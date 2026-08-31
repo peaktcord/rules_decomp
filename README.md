@@ -3,8 +3,9 @@
 Experimental shared Bazel rules and toolchains for the decompilation and
 native-port projects under `C:\git-recompile`.
 
-The module owns reusable mechanisms: checksummed tool downloads, PyPy and VICE
-toolchains, verified private inputs, patched source archives, and exact sentinel
+The module owns reusable mechanisms: checksummed tool downloads, PyPy, VICE, and
+local version-checked Ghidra toolchains, verified private inputs, isolated
+headless Ghidra pipelines and oracles, patched source archives, and exact sentinel
 comparisons. Each consuming project continues to own its source manifests,
 patches, emulator scripts, reference data, compiler flags, and test suites.
 
@@ -27,6 +28,8 @@ decomp = use_extension(
 )
 decomp.pypy(version = "7.3.23")
 decomp.vice(version = "3.10")
+# Opt in only when this repository has Ghidra targets:
+# decomp.ghidra(version = "12.1.3")
 
 use_repo(decomp, "decomp_pypy", "decomp_vice")
 
@@ -35,6 +38,10 @@ register_toolchains(
     "@decomp_vice//:toolchain",
 )
 ```
+
+Ghidra consumers also add `decomp_ghidra` to `use_repo`, register its toolchain,
+and provide `GHIDRA_ROOT` and `GHIDRA_JAVA_HOME` through `--repo_env`. See
+[docs/ghidra.md](docs/ghidra.md) for the pipeline, oracle, and interactive APIs.
 
 Adjust the relative override path for repositories outside
 `C:\git-recompile`. Do not commit an absolute machine path.

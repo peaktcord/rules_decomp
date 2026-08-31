@@ -15,3 +15,7 @@ register_toolchains(
     "@decomp_pypy//:toolchain",
     "@decomp_vice//:toolchain",
 )
+
+# Analysis-only fixture for this module's Ghidra rule tests. Dependency users do
+# not inherit registrations marked dev_dependency.
+register_toolchains("//tests:ghidra_toolchain", dev_dependency = True)

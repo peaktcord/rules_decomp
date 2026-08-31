@@ -1,6 +1,7 @@
 """Bzlmod extension for shared decompilation tool and source repositories."""
 
 load("//repositories:patched_archive.bzl", "patched_archive_repository")
+load("//repositories:ghidra.bzl", "ghidra_repository")
 load("//repositories:pypy.bzl", "pypy_repository")
 load("//repositories:vice.bzl", "vice_repository")
 
@@ -10,6 +11,11 @@ _pypy = tag_class(attrs = {
 
 _vice = tag_class(attrs = {
     "version": attr.string(default = "3.10"),
+})
+
+_ghidra = tag_class(attrs = {
+    "java_version": attr.string(default = "21"),
+    "version": attr.string(default = "12.1.3"),
 })
 
 _source_archive = tag_class(attrs = {
@@ -22,24 +28,34 @@ _source_archive = tag_class(attrs = {
     "urls": attr.string_list(mandatory = True),
 })
 
-def _single_version(module_ctx, tag_name, default):
-    versions = {}
+def _single_value(module_ctx, tag_name, attr_name, default):
+    values = {}
     for module in module_ctx.modules:
         for tag in getattr(module.tags, tag_name):
-            versions[tag.version] = True
-    if len(versions) > 1:
-        fail("conflicting %s versions requested: %s" % (tag_name, sorted(versions.keys())))
-    return versions.keys()[0] if versions else default
+            values[getattr(tag, attr_name)] = True
+    if len(values) > 1:
+        fail("conflicting %s %s values requested: %s" % (
+            tag_name,
+            attr_name,
+            sorted(values.keys()),
+        ))
+    return values.keys()[0] if values else default
+
+def _single_version(module_ctx, tag_name, default):
+    return _single_value(module_ctx, tag_name, "version", default)
 
 def _decomp_impl(module_ctx):
     want_pypy = False
     want_vice = False
+    want_ghidra = False
     source_names = {}
     for module in module_ctx.modules:
         if module.tags.pypy:
             want_pypy = True
         if module.tags.vice:
             want_vice = True
+        if module.tags.ghidra:
+            want_ghidra = True
         for source in module.tags.source_archive:
             if source.name in source_names:
                 fail("source_archive repository name requested more than once: %s" % source.name)
@@ -66,10 +82,17 @@ def _decomp_impl(module_ctx):
             name = "decomp_vice",
             version = _single_version(module_ctx, "vice", "3.10"),
         )
+    if want_ghidra:
+        ghidra_repository(
+            name = "decomp_ghidra",
+            java_version = _single_value(module_ctx, "ghidra", "java_version", "21"),
+            version = _single_version(module_ctx, "ghidra", "12.1.3"),
+        )
 
 decomp = module_extension(
     implementation = _decomp_impl,
     tag_classes = {
+        "ghidra": _ghidra,
         "pypy": _pypy,
         "source_archive": _source_archive,
         "vice": _vice,
