@@ -95,7 +95,10 @@ def main():
 
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
-    project_dir = output_dir / ".ghidra-project"
+    # Ghidra rejects project path elements beginning with a dot. The project is
+    # already disposable and removed in the finally block, so it need not be
+    # hidden from directory listings.
+    project_dir = output_dir / "ghidra-project"
     environment_root = output_dir / ".ghidra-environment"
     for directory in (project_dir, environment_root):
         directory.mkdir(parents=True, exist_ok=True)
