@@ -63,7 +63,10 @@ def run_command(command, windows, env, timeout, log):
     log.write("COMMAND %s\n" % display)
     log.flush()
     if windows:
-        actual = ["cmd.exe", "/d", "/s", "/c", subprocess.list2cmdline(command)]
+        # Pass one literal command line. A list would make subprocess escape
+        # the inner quotes around arguments containing spaces, and cmd.exe
+        # would then see \" sequences and fail with "... was unexpected".
+        actual = 'cmd.exe /d /s /c "%s"' % display
     else:
         actual = command
     started = time.monotonic()
