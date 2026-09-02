@@ -1,3 +1,6 @@
 package(default_visibility = ["//visibility:public"])
 
-exports_files(["compare_files.cpp"])
+exports_files([
+    "compare_files.cpp",
+    "ok.txt",
+])

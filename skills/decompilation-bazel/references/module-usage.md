@@ -107,3 +107,15 @@ use_repo(decomp, "altirra")
 Record the upstream revision, archive hash, patch purpose, rebase instructions,
 and verification command next to the patch. A project-specific behavioral patch
 does not belong in `rules_decomp`.
+
+## Project gates, local tools, and image splices
+
+Wrap an existing validation script with `script_check` and expose it with
+`check_test`; stage external-repository reference files with `staged_file`
+before comparing them in a `sentinel_test` on Windows; expose closed local
+toolchains with `local_tool_repository` from
+`@rules_decomp//repositories:local_tool.bzl` and hash-verify their executables
+with `verified_files`; and use `image_splice` to place regenerated ranges into a
+verified original with a provenance table. Read the shared module's
+`docs/checks.md` for the attributes. A splice is evidence of range coverage,
+not a relinked executable.

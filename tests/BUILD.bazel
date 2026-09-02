@@ -1,4 +1,4 @@
-load("//decomp:defs.bzl", "ghidra_oracle", "ghidra_pipeline", "ghidra_session", "sentinel_test", "verified_files")
+load("//decomp:defs.bzl", "check_test", "ghidra_oracle", "ghidra_pipeline", "ghidra_session", "image_splice", "script_check", "sentinel_test", "staged_file", "verified_files")
 load("//toolchains/ghidra:toolchain.bzl", "ghidra_runtime")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
@@ -81,4 +81,42 @@ ghidra_oracle(
 ghidra_session(
     name = "ghidra_session_analysis",
     tags = ["manual"],
+)
+
+script_check(
+    name = "check_ok",
+    args = ["--expect", "fixture"],
+    env = {"CHECK_FIXTURE": "set"},
+    private = False,
+    script = "check_script.py",
+)
+
+check_test(
+    name = "check_test",
+    check = ":check_ok",
+)
+
+staged_file(
+    name = "staged_fixture_tool",
+    out = "staged_tool.txt",
+    src = "@decomp_local_tool_fixture//:tool",
+)
+
+sentinel_test(
+    name = "local_tool_staged_test",
+    actual = ":staged_fixture_tool",
+    expected = "fixture_tool/bin/tool.txt",
+)
+
+image_splice(
+    name = "spliced_input",
+    original = ":verified_input",
+    pieces = ["piece.txt"],
+    placements = "placements.tsv",
+)
+
+sentinel_test(
+    name = "image_splice_test",
+    actual = ":spliced_input",
+    expected = "expected.txt",
 )

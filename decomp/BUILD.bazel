@@ -1,9 +1,16 @@
 package(default_visibility = ["//visibility:public"])
 
 exports_files([
+    "checks.bzl",
     "defs.bzl",
     "ghidra.bzl",
     "ghidra_runner.py",
+    "image_splice.bzl",
+    "run_check.py",
+    "sentinel.bzl",
+    "splice_image.py",
+    "stage_file.py",
+    "staging.bzl",
     "verified_inputs.bzl",
     "verify_files.py",
 ])

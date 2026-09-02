@@ -33,3 +33,14 @@ sdl3_test_repository(
     platform = "linux",
     version = "3.4.14",
 )
+
+# Fixture for the local tool repository rule; consumers never reference it.
+local_tool_repository = use_repo_rule("//repositories:local_tool.bzl", "local_tool_repository")
+local_tool_repository(
+    name = "decomp_local_tool_fixture",
+    aliases = {"tool": "bin/tool.txt"},
+    default_path = "tests/fixture_tool",
+    env_var = "DECOMP_LOCAL_TOOL_FIXTURE",
+    links = {"bin": "bin"},
+    required = ["bin/tool.txt"],
+)
