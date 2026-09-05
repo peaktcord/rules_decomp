@@ -2,6 +2,9 @@
 
 #include <cstdio>
 
+static_assert(sizeof(void *) == DECOMP_EXPECTED_POINTER_BYTES,
+              "compiler architecture must match the SDL target platform");
+
 int main() {
     const int version = SDL_GetVersion();
     if (SDL_VERSIONNUM_MAJOR(version) != 3) {

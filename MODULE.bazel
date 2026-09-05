@@ -7,6 +7,11 @@ bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "rules_cc", version = "0.2.22")
 bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
 
+# rules_cc creates the MSVC x86 cross-toolchain but does not register it in
+# its default toolchain set. The windows_x86 config opts into it explicitly.
+cc_configure = use_extension("@rules_cc//cc:extensions.bzl", "cc_configure_extension")
+use_repo(cc_configure, "local_config_cc")
+
 decomp = use_extension("//:extensions.bzl", "decomp")
 decomp.pypy(version = "7.3.23")
 decomp.sdl3(version = "3.4.14")

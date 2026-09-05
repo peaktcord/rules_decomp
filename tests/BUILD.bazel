@@ -19,6 +19,10 @@ sentinel_test(
 cc_test(
     name = "sdl3_smoke",
     srcs = ["sdl3_smoke.cpp"],
+    defines = select({
+        "@platforms//cpu:x86_32": ["DECOMP_EXPECTED_POINTER_BYTES=4"],
+        "@platforms//cpu:x86_64": ["DECOMP_EXPECTED_POINTER_BYTES=8"],
+    }),
     deps = ["@decomp_sdl3//:sdl3"],
 )
 

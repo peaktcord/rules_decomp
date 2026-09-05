@@ -1,3 +1,5 @@
 common --enable_bzlmod
 build:windows --platforms=//platforms:windows_x86_64
+build:windows_x86 --platforms=//platforms:windows_x86
+build:windows_x86 --extra_toolchains=@local_config_cc//:cc-toolchain-x64_x86_windows
 build:linux --platforms=//platforms:linux_x86_64

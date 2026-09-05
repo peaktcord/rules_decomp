@@ -199,7 +199,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%decomp": {
       "general": {
-        "bzlTransitiveDigest": "L3x8uyDIBdryd07Ehlk5zp1RagJSFdoV1iiNyckrpfw=",
+        "bzlTransitiveDigest": "LkqeAM6sNXCXtih2xmvmGog3F1Zyq7+VQ30book7RKI=",
         "usagesDigest": "jwfZUHEKZIJjNfCoH+q5lgzbiPE2TSu76Ezolyv6n7E=",
         "recordedInputs": [],
         "generatedRepoSpecs": {

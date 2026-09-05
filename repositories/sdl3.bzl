@@ -22,10 +22,26 @@ package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])
 
+config_setting(
+    name = "windows_x86",
+    constraint_values = ["@platforms//cpu:x86_32", "@platforms//os:windows"],
+)
+
+config_setting(
+    name = "windows_x64",
+    constraint_values = ["@platforms//cpu:x86_64", "@platforms//os:windows"],
+)
+
 cc_import(
     name = "sdl3_binary",
-    interface_library = "lib/x64/SDL3.lib",
-    shared_library = "lib/x64/SDL3.dll",
+    interface_library = select({
+        ":windows_x86": "lib/x86/SDL3.lib",
+        ":windows_x64": "lib/x64/SDL3.lib",
+    }, no_match_error = "The Windows SDL3 archive supports Windows x86 and x64 targets only."),
+    shared_library = select({
+        ":windows_x86": "lib/x86/SDL3.dll",
+        ":windows_x64": "lib/x64/SDL3.dll",
+    }, no_match_error = "The Windows SDL3 archive supports Windows x86 and x64 targets only."),
 )
 
 cc_library(
@@ -37,7 +53,10 @@ cc_library(
 
 filegroup(
     name = "runtime",
-    srcs = ["lib/x64/SDL3.dll"],
+    srcs = select({
+        ":windows_x86": ["lib/x86/SDL3.dll"],
+        ":windows_x64": ["lib/x64/SDL3.dll"],
+    }, no_match_error = "The Windows SDL3 archive supports Windows x86 and x64 targets only."),
 )
 
 filegroup(
@@ -117,7 +136,9 @@ def _sdl3_repository_impl(repository_ctx):
     arch = repository_ctx.os.arch.lower()
     strip_prefix = "SDL3-%s" % version
 
-    if arch not in ("amd64", "x86_64", "x64"):
+    # Windows ships both target architectures in one archive. The host CPU
+    # must not decide which library a consumer links. Linux remains x86-64.
+    if not os_name.startswith("windows") and arch not in ("amd64", "x86_64", "x64"):
         build, message = _unsupported_build_file(
             "SDL3 %s is currently configured for x86-64 hosts; host architecture is %s.\n" % (
                 version,

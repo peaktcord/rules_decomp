@@ -6,8 +6,9 @@
 @decomp_sdl3//:sdl3
 ```
 
-The current pin is SDL 3.4.14. Windows uses SDL's official Visual C++ x64
-development archive; Linux builds the same release source through SDL's upstream
+The current pin is SDL 3.4.14. Windows uses SDL's official Visual C++
+development archive, which contains both x86 and x64 libraries; Linux builds
+the same release source through SDL's upstream
 CMake project. Both paths use the shared library and retain SDL's native
 platform configuration.
 
@@ -69,9 +70,51 @@ packaging rule. A distributable directory must contain the game executable, the
 SDL shared library, the SDL license, and project assets; do not rely on copying
 files from `bazel-bin` by hand.
 
+## Windows target architecture
+
+The Windows repository selects `lib/x86/SDL3.lib` and `SDL3.dll` for
+`@platforms//cpu:x86_32`, or `lib/x64` for `@platforms//cpu:x86_64`.
+Both selections also require `@platforms//os:windows`. The same target-platform
+selection applies to `:sdl3` and `:runtime`, so packaging receives the matching
+DLL. An unsupported target produces a configuration error instead of silently
+falling back to x64. Host architecture does not select the Windows library.
+
+Shared platform labels are `@rules_decomp//platforms:windows_x86` and
+`@rules_decomp//platforms:windows_x86_64`. In the `rules_decomp` checkout:
+
+```powershell
+bazelisk test //tests:sdl3_smoke --config=windows
+bazelisk test //tests:sdl3_smoke --config=windows_x86
+```
+
+Both configurations compile, link, and load SDL3 at runtime. The smoke test
+also asserts that the compiler's pointer width matches the selected target.
+
+For a consumer using the local MSVC toolchain on an x64 Windows host, expose
+`rules_cc`'s existing cross-toolchain in `MODULE.bazel`:
+
+```starlark
+cc_configure = use_extension("@rules_cc//cc:extensions.bzl", "cc_configure_extension")
+use_repo(cc_configure, "local_config_cc")
+```
+
+Then add an opt-in consumer `.bazelrc` configuration:
+
+```text
+build:windows_x86 --platforms=@rules_decomp//platforms:windows_x86
+build:windows_x86 --extra_toolchains=@local_config_cc//:cc-toolchain-x64_x86_windows
+```
+
+`rules_cc` 0.2.22 creates that x86 toolchain but does not include it in its
+default registered set. Consumers with their own registered x86 compiler need
+only select the target platform. Repository configuration files are not
+inherited by consuming projects.
+
 ## Platform and compiler policy
 
-- Supported initially: Windows x86-64 with MSVC or `clang-cl`, and Linux x86-64.
+- Supported targets: Windows x86 and x86-64 with a matching MSVC-compatible
+  toolchain, and Linux x86-64. The smoke tests were executed with MSVC for both
+  Windows architectures.
 - Use shared SDL. It keeps the Windows dependency small and preserves SDL's
   dynamic Linux backend behavior.
 - Pin one SDL version across all projects. Upgrade centrally and run every
